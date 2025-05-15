@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -33,7 +34,7 @@ const Nav = styled.nav`
   align-items: center;
 `;
 
-const NavLink = styled.a`
+const NavLink = styled(Link)`
   color: #222;
   font-size: 13px;
   font-weight: 400;
@@ -64,10 +65,10 @@ const Header: React.FC = () => (
     <HeaderContent>
       <Logo>MITRA KARYA GROUP</Logo>
       <Nav>
-        <NavLink href="#">Dasbor</NavLink>
+        <NavLink href="/dashboard">Dasbor</NavLink>
         <NavLink href="/candidate/profile">Profil</NavLink>
-        <NavLink href="#">Lowongan Pekerjaan</NavLink>
-        <NavLink href="#">Lamaran</NavLink>
+        <NavLink href="/candidate/jobs">Lowongan Pekerjaan</NavLink>
+        <NavLink href="/candidate/jobs/application-history">Lamaran</NavLink>
       </Nav>
       <ProfileIcon>
         <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
