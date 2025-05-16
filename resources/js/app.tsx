@@ -1,10 +1,11 @@
 import '../css/app.css';
-
+import React from 'react';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'sonner'; // Tambahin Sonner
 import { initializeTheme } from './hooks/use-appearance';
+import DetailPekerjaanForm from './components/DetailPekerjaanForm';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -25,6 +26,11 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+const container = document.getElementById('app');
+if (container) {
+    createRoot(container).render(<DetailPekerjaanForm />);
+}
 
 // This will set light / dark mode on load...
 initializeTheme();

@@ -87,4 +87,37 @@ class VacanciesController extends Controller
             'message' => 'Job deleted successfully',
         ]);
     }
+
+    public function show($id)
+    {
+        $vacancy = Vacancies::findOrFail($id);
+        
+        return Inertia::render('DetailPekerjaan/Show', [
+            'vacancy' => [
+                'id' => $vacancy->id,
+                'title' => 'Hardware Engineer',
+                'company' => 'PT Autentik Karya Analitika',
+                'description' => 'Ahli yang merancang, mengembangkan, dan menguji perangkat keras, termasuk desain PCB dan integrasi komponen elektronik, untuk aplikasi seperti robotika dan sistem tertanam.',
+                'requirements' => [
+                    'D3/S1 bidang Teknik Listrik, Teknik Elektro, Mekatronika, Elektromekanik, atau yang relevan',
+                    'Memiliki pengetahuan tingkat lanjut terkait robotika, pemrograman tertanam, PCB layout, dan PCB desain',
+                    'Tidak buta warna',
+                    'Bersedia ditempatkan di Kota Semarang'
+                ],
+                'benefits' => [
+                    'Gaji Pokok',
+                    'Training',
+                    'Lorem ipsum dolor sit amet'
+                ]
+            ]
+        ]);
+    }
+
+    public function apply(Request $request, $id)
+    {
+        $vacancy = Vacancies::findOrFail($id);
+        // Add application logic here
+        
+        return redirect()->back()->with('success', 'Lamaran berhasil dikirim');
+    }
 }
