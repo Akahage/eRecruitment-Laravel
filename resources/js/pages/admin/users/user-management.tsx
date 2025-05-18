@@ -19,7 +19,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface PaginationData {
     total: number;
@@ -73,6 +73,40 @@ export default function UserManagement(props: UserManagementProps) {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editUser, setEditUser] = useState<Partial<User>>({ name: '', email: '', role: '' });
 
+    // Function to update URL parameters without page refresh
+    const updateUrlParams = (page: number, perPage: number) => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page.toString());
+        url.searchParams.set('per_page', perPage.toString());
+        window.history.pushState({}, '', url.toString());
+    };
+
+    const fetchUsers = useCallback(
+        async (page = 1, perPage = pagination.per_page) => {
+            setIsLoading(true);
+            try {
+                // Update URL without full page refresh
+                updateUrlParams(page, perPage);
+
+                const response = await axios.get('/dashboard/users/list', {
+                    params: {
+                        page,
+                        per_page: perPage,
+                    },
+                });
+
+                // Handle response data
+                setUsers(response.data.users);
+                setPagination(response.data.pagination);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [pagination.per_page, updateUrlParams]
+    );
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const page = urlParams.get('page') ? parseInt(urlParams.get('page')!) : 1;
@@ -83,34 +117,9 @@ export default function UserManagement(props: UserManagementProps) {
         }
     }, []);
 
-    const fetchUsers = async (page = 1, perPage = pagination.per_page) => {
-        setIsLoading(true);
-        try {
-            // Update URL without full page refresh
-            updateUrlParams(page, perPage);
-
-            const response = await axios.get('/dashboard/users/list', {
-                params: {
-                    page,
-                    per_page: perPage,
-                },
-            });
-            setUsers(response.data.users);
-            setPagination(response.data.pagination);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Function to update URL parameters without page refresh
-    const updateUrlParams = (page: number, perPage: number) => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('page', page.toString());
-        url.searchParams.set('per_page', perPage.toString());
-        window.history.pushState({}, '', url.toString());
-    };
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const handlePageChange = (page: number) => {
         fetchUsers(page, pagination.per_page);
