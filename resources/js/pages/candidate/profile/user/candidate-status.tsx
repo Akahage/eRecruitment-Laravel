@@ -6,7 +6,7 @@ import AssesmentPending from './assesment-pending'
 import AssesmentOngoing from './assesment-ongoing';
 import AssesmentPassed from './assesment-passed';
 import AssesmentPrep from './assesment-prep';
-import InterviewPending from './interview-pending';
+import InterviewPending from './interview-pending'; 
 import InterviewOngoing from './interview-ongoing';
 import InterviewPrep from './interview-prep';
 
