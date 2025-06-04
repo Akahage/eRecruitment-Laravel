@@ -42,7 +42,9 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+            // Increment rate limiter with configurable decay time
+            $decayMinutes = (int) env('LOGIN_RATE_LIMIT_MINUTES', 15);
+            RateLimiter::hit($this->throttleKey(), $decayMinutes * 60);
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
@@ -59,13 +61,35 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        // Get rate limit configuration from environment
+        $maxAttempts = (int) env('LOGIN_RATE_LIMIT_ATTEMPTS', 2);
+        $decayMinutes = (int) env('LOGIN_RATE_LIMIT_MINUTES', 15);
+        
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), $maxAttempts)) {
             return;
         }
 
         event(new Lockout($this));
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        // Log rate limit violations for security monitoring
+        \Log::warning('Login rate limit exceeded', [
+            'email' => $this->email,
+            'ip' => $this->ip(),
+            'user_agent' => $this->userAgent(),
+            'attempts' => $maxAttempts,
+            'lockout_minutes' => $decayMinutes
+        ]);
+
+        // Use custom message from environment or fallback to default
+        $customMessage = env('LOGIN_RATE_LIMIT_MESSAGE');
+        
+        if ($customMessage) {
+            throw ValidationException::withMessages([
+                'email' => $customMessage,
+            ]);
+        }
 
         throw ValidationException::withMessages([
             'email' => __('auth.throttle', [

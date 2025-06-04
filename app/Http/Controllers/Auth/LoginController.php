@@ -12,16 +12,17 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\RedirectResponse;
 
 class LoginController extends Controller
-{
-    public function __construct()
+{    public function __construct()
     {
         $this->configureRateLimiting();
-    }
-
-    protected function configureRateLimiting()
+    }    protected function configureRateLimiting()
     {
         RateLimiter::for('login', function (Request $request) {
-            return Limit::perMinute(5)->by($request->email.$request->ip());
+            // Get configuration from environment with fallback defaults
+            $maxAttempts = (int) env('LOGIN_RATE_LIMIT_ATTEMPTS', 2);
+            $minutes = (int) env('LOGIN_RATE_LIMIT_MINUTES', 15);
+            
+            return Limit::perMinutes($minutes, $maxAttempts)->by($request->email.$request->ip());
         });
     }
 
