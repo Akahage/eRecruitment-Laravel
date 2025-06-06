@@ -1,4 +1,5 @@
-import React from 'react';
+import { Inertia } from '@inertiajs/inertia';
+import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Footer from '../../../components/Footer';
 import Header from '../../../components/Header';
@@ -15,16 +16,23 @@ interface Job {
   company: {
     name: string;
   };
-  description: string;
+  description?: string;
   location: string;
-  type: string;
-  deadline: string;
-  department: string;
+  type: string | { name: string };
+  deadline?: string;
+  department: string | { name: string };
+}
+
+interface Recommendation {
+  vacancy: Job;
+  score: number;
 }
 
 interface Props {
-  jobs: Job[];
-  companies: string[];
+  jobs?: Job[];
+  recommendations?: Recommendation[];
+  companies?: string[];
+  candidateMajor?: string;
 }
 
 const PageWrapper = styled.div`
@@ -72,24 +80,24 @@ const ContentContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  color: #0088FF;  // Changed to match the image
+  color: #0088FF;
   font-size: 32px;
   font-weight: 600;
-  text-align: left;  // Added to center the title
-  margin: 40px 0 16px;  // Adjusted margins
+  text-align: left;
+  margin: 40px 0 16px;
 `;
 
 const Underline = styled.div`
   width: 80px;
   height: 4px;
-  background: #0088FF;  // Changed to match the image
+  background: #0088FF;
   border-radius: 2px;
-  margin: 0 0 32px;  // Centered the underline
+  margin: 0 0 32px;
 `;
 
 const FilterContainer = styled.div`
   display: flex;
-  justify-content: flex-start;  // Center the filter buttons
+  justify-content: flex-start;
   gap: 12px;
   margin-bottom: 24px;
 `;
@@ -103,12 +111,12 @@ const FilterButton = styled.button<FilterButtonProps>`
   color: ${(props) => (props.active ? '#fff' : '#0088FF')};
   border: 1px solid #0088FF;
   border-radius: 20px;
-  padding: 8px 20px;  // Adjusted padding
+  padding: 8px 20px;
   font-size: 14px;
-  font-weight: 500;  // Adjusted weight
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;  // Prevent text wrapping
+  white-space: nowrap;
 
   &:hover {
     background: ${(props) => (props.active ? '#0077E6' : '#E6F4FF')};
@@ -183,39 +191,25 @@ const DetailButton = styled.button`
   }
 `;
 
-const JobHiring: React.FC<Props> = ({ jobs }) => {
-  const [activeFilter, setActiveFilter] = React.useState<string>('all');
-  const [filteredJobs, setFilteredJobs] = React.useState(jobs);
+const JobHiring: React.FC<Props> = ({ jobs = [], recommendations: initialRecommendations = [], companies = [], candidateMajor }) => {
+  const [recommendations] = useState<Recommendation[]>(initialRecommendations || []);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>(jobs || []);
 
-  const filterJobs = React.useCallback((company: string) => {
-    setActiveFilter(company);
-
-    // Update URL with company filter
-    const url = new URL(window.location.href);
-    if (company === 'all') {
-      url.searchParams.delete('company');
+  useEffect(() => {
+    if (activeFilter === 'all') {
+      setFilteredJobs(jobs || []);
     } else {
-      url.searchParams.set('company', company);
+      setFilteredJobs((jobs || []).filter(job => job?.company?.name === activeFilter));
     }
-    window.history.pushState({}, '', url.toString());
+  }, [activeFilter, jobs]);
 
-    // Filter jobs
-    if (company === 'all') {
-      setFilteredJobs(jobs);
-    } else {
-      const filtered = jobs.filter(job => job.company.name === company);
-      setFilteredJobs(filtered);
-    }
-  }, [jobs]);
+  const filterJobs = (filter: string) => {
+    setActiveFilter(filter);
+  };
 
-  // Add effect to handle initial filter from URL
-  React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const companyFilter = urlParams.get('company');
-    if (companyFilter) {
-      filterJobs(companyFilter);
-    }
-  }, [filterJobs]);
+  // Hilangkan duplikat nama perusahaan
+  const uniqueCompanies = Array.from(new Set(companies || []));
 
   return (
     <>
@@ -232,6 +226,46 @@ const JobHiring: React.FC<Props> = ({ jobs }) => {
             </HeroContent>
           </HeroSection>
           <ContentContainer>
+            {/* Rekomendasi Section */}
+            <Title>Rekomendasi Pekerjaan Untuk Anda</Title>
+            <Underline />
+            {candidateMajor && (
+              <Description>
+                Berdasarkan jurusan Anda: <b>{candidateMajor}</b>
+              </Description>
+            )}
+            {(recommendations || []).length === 0 ? (
+              <JobCard>
+                <JobInfo>
+                  <JobTitle>Tidak ada rekomendasi yang cocok.</JobTitle>
+                  <Description>
+                    Belum ada lowongan yang sesuai dengan jurusan Anda saat ini.
+                  </Description>
+                </JobInfo>
+              </JobCard>
+            ) : (
+              recommendations.map(({ vacancy, score }) => (
+                <JobCard key={vacancy.id}>
+                  <JobInfo>
+                    <JobTitle>{vacancy.title}</JobTitle>
+                    <Company>{vacancy.company?.name || 'Unknown Company'}</Company>
+                    <Description>{vacancy.description || 'No description available'}</Description>
+                    <JobDetails>
+                      <span>🏢 {vacancy.location || 'No location'}</span>
+                      <span>🕒 {typeof vacancy.type === 'object' ? vacancy.type?.name : vacancy.type}</span>
+                      <span>📅 {vacancy.deadline || 'Open'}</span>
+                      <span>👥 {typeof vacancy.department === 'object' ? vacancy.department?.name : vacancy.department}</span>
+                      <span>⭐ Score: {score}</span>
+                    </JobDetails>
+                  </JobInfo>
+                  <DetailButton onClick={() => Inertia.visit(`/candidate/job/${vacancy.id}`)}>
+                    Lihat Detail
+                  </DetailButton>
+                </JobCard>
+              ))
+            )}
+
+            {/* Semua Lowongan Section */}
             <Title>Open Positions</Title>
             <Underline />
             <FilterContainer>
@@ -241,35 +275,45 @@ const JobHiring: React.FC<Props> = ({ jobs }) => {
               >
                 View All
               </FilterButton>
-              <FilterButton
-                active={activeFilter === 'PT MITRA KARYA ANALITIKA'}
-                onClick={() => filterJobs('PT MITRA KARYA ANALITIKA')}
-              >
-                PT MITRA KARYA ANALITIKA
-              </FilterButton>
-              <FilterButton
-                active={activeFilter === 'PT AUTENTIK KARYA ANALITIKA'}
-                onClick={() => filterJobs('PT AUTENTIK KARYA ANALITIKA')}
-              >
-                PT AUTENTIK KARYA ANALITIKA
-              </FilterButton>
+              {uniqueCompanies.map((company) => (
+                <FilterButton
+                  key={company}
+                  active={activeFilter === company}
+                  onClick={() => filterJobs(company)}
+                >
+                  {company}
+                </FilterButton>
+              ))}
             </FilterContainer>
-            {filteredJobs.map((job) => (
-              <JobCard key={job.id}>
+            {filteredJobs.length > 0 ? (
+              filteredJobs.map((job) => (
+                <JobCard key={job.id}>
+                  <JobInfo>
+                    <JobTitle>{job.title}</JobTitle>
+                    <Company>{job.company?.name || 'Unknown Company'}</Company>
+                    <Description>{job.description || 'No description available'}</Description>
+                    <JobDetails>
+                      <span>🏢 {job.location || 'No location'}</span>
+                      <span>🕒 {typeof job.type === 'object' ? job.type?.name : job.type}</span>
+                      <span>📅 {job.deadline || 'Open'}</span>
+                      <span>👥 {typeof job.department === 'object' ? job.department?.name : job.department}</span>
+                    </JobDetails>
+                  </JobInfo>
+                  <DetailButton onClick={() => Inertia.visit(`/job-detail/${job.id}`)}>
+                    Lihat Detail
+                  </DetailButton>
+                </JobCard>
+              ))
+            ) : (
+              <JobCard>
                 <JobInfo>
-                  <JobTitle>{job.title}</JobTitle>
-                  <Company>{job.company.name}</Company>
-                  <Description>{job.description}</Description>
-                  <JobDetails>
-                    <span>🏢 {job.location}</span>
-                    <span>🕒 {job.type}</span>
-                    <span>📅 {job.deadline}</span>
-                    <span>👥 {job.department}</span>
-                  </JobDetails>
+                  <JobTitle>Tidak ada lowongan tersedia</JobTitle>
+                  <Description>
+                    Saat ini tidak ada lowongan pekerjaan yang tersedia.
+                  </Description>
                 </JobInfo>
-                <DetailButton>Lihat Detail</DetailButton>
               </JobCard>
-            ))}
+            )}
           </ContentContainer>
         </JobHiringContainer>
       </PageWrapper>
