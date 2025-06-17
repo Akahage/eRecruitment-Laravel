@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // User route
-Route::middleware(['auth'])
+Route::middleware(['auth', 'verified'])
     ->prefix('candidate')
     ->group(function () {
         Route::get('/', [CandidateController::class, 'index'])->name('user.info');
@@ -26,6 +26,10 @@ Route::middleware(['auth'])
             
         Route::get('/job/{id}', [JobsController::class, 'detail'])->name('candidate.job.detail');
         Route::get('/application-history', [ApplicationHistoryController::class, 'index'])->name('candidate.application-history');
+        
+        // Route untuk psychotest
+        Route::get('/psychotest', [CandidateController::class, 'psychotest'])->name('candidate.psychotest');
+        Route::post('/psychotest/submit', [CandidateController::class, 'submitPsychotest'])->name('candidate.psychotest.submit');
     });
 
 // Route::middleware(['auth'])->group(function () {

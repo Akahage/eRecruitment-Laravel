@@ -153,23 +153,6 @@ export default function JobHiringPage() {
                                 Kami adalah perusahaan teknologi pintar yang senantiasa berkomitmen untuk memberikan dan meningkatkan kepuasan
                                 pelanggan
                             </p>
-                            <div className="flex space-x-4 text-xl text-blue-600">
-                                <a href="#">
-                                    <i className="fab fa-instagram"></i>
-                                </a>
-                                <a href="#">
-                                    <i className="fab fa-x"></i>
-                                </a>
-                                <a href="#">
-                                    <i className="fab fa-linkedin-in"></i>
-                                </a>
-                                <a href="#">
-                                    <i className="fab fa-youtube"></i>
-                                </a>
-                                <a href="#">
-                                    <i className="fab fa-whatsapp"></i>
-                                </a>
-                            </div>
                         </div>
 
                         {/* Kolom 2 */}

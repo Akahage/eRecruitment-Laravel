@@ -332,20 +332,48 @@ export default function Welcome(props: WelcomeProps) {
                                 Kami adalah perusahaan teknologi pintar yang senantiasa berkomitmen untuk memberikan dan meningkatkan kepuasan
                                 pelanggan
                             </p>
-                            <div className="flex space-x-4 text-xl text-blue-600">
-                                <a href="#">
-                                    <i className="fab fa-instagram"></i>
-                                </a>
-                                <a href="#">
-                                    <i className="fab fa-x-twitter"></i>
-                                </a>
-                                <a href="#">
-                                    <i className="fab fa-linkedin-in"></i>
-                                </a>
-                                <a href="#">
+                            <div className="flex space-x-6 text-xl text-blue-600">
+                                {/* Instagram - Dropdown untuk dua akun */}
+                                <div className="relative group">
+                                    <a href="#" className="group-hover:text-blue-800">
+                                        <i className="fab fa-instagram"></i>
+                                    </a>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-white shadow-md rounded-md p-2 hidden group-hover:block z-10 w-48">
+                                        <a href="https://www.instagram.com/mikacares.id" target="_blank" rel="noopener noreferrer" 
+                                           className="block py-1 hover:text-blue-800">
+                                            @mikacares.id
+                                        </a>
+                                        <a href="https://www.instagram.com/autentik.co.id" target="_blank" rel="noopener noreferrer"
+                                           className="block py-1 hover:text-blue-800">
+                                            @autentik.co.id
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* LinkedIn - Dropdown untuk dua perusahaan */}
+                                <div className="relative group">
+                                    <a href="#" className="group-hover:text-blue-800">
+                                        <i className="fab fa-linkedin-in"></i>
+                                    </a>
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-white shadow-md rounded-md p-2 hidden group-hover:block z-10 w-64">
+                                        <a href="https://www.linkedin.com/company/pt-mitra-karya-analitika" target="_blank" rel="noopener noreferrer" 
+                                           className="block py-1 hover:text-blue-800">
+                                            PT Mitra Karya Analitika
+                                        </a>
+                                        <a href="https://www.linkedin.com/company/pt-autentik-karya-analitika" target="_blank" rel="noopener noreferrer"
+                                           className="block py-1 hover:text-blue-800">
+                                            PT Autentik Karya Analitika
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* YouTube */}
+                                <a href="https://www.youtube.com/@mikacares" target="_blank" rel="noopener noreferrer" className="hover:text-blue-800">
                                     <i className="fab fa-youtube"></i>
                                 </a>
-                                <a href="#">
+
+                                {/* WhatsApp */}
+                                <a href="https://wa.me/6281770555554" target="_blank" rel="noopener noreferrer" className="hover:text-blue-800">
                                     <i className="fab fa-whatsapp"></i>
                                 </a>
                             </div>

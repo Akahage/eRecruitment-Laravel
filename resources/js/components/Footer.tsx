@@ -85,13 +85,6 @@ const Footer: React.FC = () => (
         <FooterDesc>
           Kami adalah perusahaan teknologi pintar yang senantiasa berkomitmen untuk memberikan dan meningkatkan kepuasan pelanggan
         </FooterDesc>
-        <FooterSocial>
-          <a href="#"><i className="fab fa-instagram" /></a>
-          <a href="#"><i className="fab fa-x" /></a>
-          <a href="#"><i className="fab fa-linkedin-in" /></a>
-          <a href="#"><i className="fab fa-youtube" /></a>
-          <a href="#"><i className="fab fa-whatsapp" /></a>
-        </FooterSocial>
       </FooterCol>
       {/* Kolom 2 */}
       <FooterCol>

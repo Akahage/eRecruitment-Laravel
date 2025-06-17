@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Validation\ValidationException;
-use App\Models\MasterGender;
 use App\Models\Job;
 
 class CandidateController extends Controller
@@ -40,25 +39,8 @@ class CandidateController extends Controller
     // }
     public function dashboard()
     {
-        $user = Auth::user();
-        $education = CandidatesEducations::where('user_id', $user->id)->first(); // Tambahkan ini
-        
-        // Ambil semua data gender dari master_genders
-        $genders = MasterGender::all();
-
-        return Inertia::render('PersonalData', [
-            'education' => $education, // Tambahkan ini
-            'user' => [
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-            'genders' => $genders->map(function($gender) {
-                return [
-                    'value' => $gender->name,
-                    'label' => $gender->name
-                ];
-            })
-        ]);
+        // Redirect dashboard to landing page
+        return redirect()->route('home');
     }
 
     /**
@@ -1556,6 +1538,101 @@ public function jobRecommendations()
 
     return response()->json([
         'recommendations' => $recommendations,
+    ]);
+}
+
+public function psychotest()
+{
+    // Contoh data test info
+    $testInfo = [
+        'title' => 'Tes Psikotes',
+        'type' => 'Logic',
+        'duration' => 60, // dalam menit
+        'totalQuestions' => 50,
+        'instructions' => 'Pilih jawaban yang paling sesuai dengan diri Anda. Tidak ada jawaban benar atau salah. Jawablah dengan jujur dan spontan.'
+    ];
+
+    // Contoh data questions - nanti bisa diambil dari database
+    $questions = [
+        [
+            'id' => 1,
+            'question' => 'Bagaimana cara Anda biasanya berinteraksi dengan orang lain dalam sebuah kelompok?',
+            'options' => [
+                'Saya biasanya mengambil peran sebagai pemimpin dan memandu diskusi.',
+                'Saya lebih suka mendengarkan dan memberikan kontribusi ketika diminta.',
+                'Saya aktif berbagi ide dan berdiskusi dengan semua anggota kelompok.',
+                'Saya cenderung mengikuti arahan orang lain dan fokus pada tugas yang diberikan.'
+            ]
+        ],
+        [
+            'id' => 2,
+            'question' => 'Ketika menghadapi deadline yang ketat, apa yang biasanya Anda lakukan?',
+            'options' => [
+                'Membuat jadwal detail dan mengerjakan tugas step by step.',
+                'Fokus pada bagian terpenting terlebih dahulu.',
+                'Bekerja intensif pada menit-menit terakhir.',
+                'Meminta bantuan orang lain untuk menyelesaikan tepat waktu.'
+            ]
+        ],
+        [
+            'id' => 3,
+            'question' => 'Bagaimana Anda mengelola emosi ketika menghadapi kritik atau feedback negatif?',
+            'options' => [
+                'Saya mendengarkan dengan tenang dan mencoba memahami maksudnya.',
+                'Saya merasa sedikit tersinggung tapi berusaha tidak menunjukkannya.',
+                'Saya langsung mencari cara untuk memperbaiki kekurangan tersebut.',
+                'Saya membutuhkan waktu untuk memproses feedback tersebut.'
+            ]
+        ],
+        [
+            'id' => 4,
+            'question' => 'Dalam situasi yang penuh tekanan, bagaimana cara Anda tetap produktif?',
+            'options' => [
+                'Saya tetap tenang dan berpikir logis untuk mencari solusi.',
+                'Saya memecah masalah menjadi bagian-bagian kecil yang lebih mudah.',
+                'Saya mencari dukungan dari rekan kerja atau atasan.',
+                'Saya menggunakan pengalaman sebelumnya sebagai panduan.'
+            ]
+        ],
+        [
+            'id' => 5,
+            'question' => 'Bagaimana cara Anda mempelajari hal baru?',
+            'options' => [
+                'Saya lebih suka belajar melalui praktik langsung.',
+                'Saya suka membaca dan mempelajari teori terlebih dahulu.',
+                'Saya belajar dengan bertanya dan berdiskusi dengan orang lain.',
+                'Saya mengombinasikan berbagai metode pembelajaran.'
+            ]
+        ]
+    ];
+
+    return Inertia::render('candidate/tests/candidate-psychotest', [
+        'questions' => $questions,
+        'testInfo' => $testInfo,
+        'userAnswers' => [], // Jawaban user jika ada
+    ]);
+}
+
+public function submitPsychotest(Request $request)
+{
+    $request->validate([
+        'answers' => 'required|array',
+        'answers.*' => 'required|string',
+    ]);
+
+    $user = Auth::user();
+    $answers = $request->input('answers');
+
+    // TODO: Simpan jawaban ke database
+    // Contoh: PsychotestResult::create([
+    //     'user_id' => $user->id,
+    //     'answers' => json_encode($answers),
+    //     'completed_at' => now(),
+    // ]);
+
+    return response()->json([
+        'message' => 'Psychotest berhasil diselesaikan!',
+        'redirect' => route('user.dashboard')
     ]);
 }
 }

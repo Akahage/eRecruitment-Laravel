@@ -11,7 +11,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register helper files
+        require_once app_path('Helpers/SocialMediaHelper.php');
     }
 
     /**

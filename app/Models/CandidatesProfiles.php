@@ -11,7 +11,7 @@ class CandidatesProfiles extends Model
 {
     use HasFactory;
 
-    protected $table = 'candidates_profiles';  // Explicitly set the table name
+    protected $table = 'candidate_profiles';  // Explicitly set the table name
 
     protected $fillable = [
         'user_id',

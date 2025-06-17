@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class VacanciesController extends Controller
 {
@@ -32,7 +33,7 @@ class VacanciesController extends Controller
                         'description' => $vacancy->job_description ?? $vacancy->description,
                         'location' => $vacancy->location,
                         'type' => $vacancy->jobType ? $vacancy->jobType->name : 'N/A',
-                        'deadline' => $vacancy->deadline ? $vacancy->deadline->format('d F Y') : 'Open',
+                        'deadline' => $vacancy->deadline ? (is_object($vacancy->deadline) ? $vacancy->deadline->format('d F Y') : Carbon::parse($vacancy->deadline)->format('d F Y')) : 'Open',
                         'department' => $vacancy->department ? $vacancy->department->name : 'N/A',
                     ];
                 });
@@ -141,7 +142,7 @@ class VacanciesController extends Controller
                 'description' => $vacancy->job_description ?? $vacancy->description,
                 'location' => $vacancy->location,
                 'type' => $vacancy->jobType ? $vacancy->jobType->name : 'N/A',
-                'deadline' => $vacancy->deadline ? $vacancy->deadline->format('d F Y') : 'Open',
+                'deadline' => $vacancy->deadline ? (is_object($vacancy->deadline) ? $vacancy->deadline->format('d F Y') : Carbon::parse($vacancy->deadline)->format('d F Y')) : 'Open',
                 'department' => $vacancy->department ? $vacancy->department->name : 'N/A',
                 'requirements' => $vacancy->requirements,
             ];
@@ -165,7 +166,7 @@ class VacanciesController extends Controller
                         'description' => $vacancy->job_description ?? $vacancy->description,
                         'location' => $vacancy->location,
                         'type' => $vacancy->jobType ? $vacancy->jobType->name : 'N/A',
-                        'deadline' => $vacancy->deadline ? $vacancy->deadline->format('d F Y') : 'Open',
+                        'deadline' => $vacancy->deadline ? (is_object($vacancy->deadline) ? $vacancy->deadline->format('d F Y') : Carbon::parse($vacancy->deadline)->format('d F Y')) : 'Open',
                         'department' => $vacancy->department ? $vacancy->department->name : 'N/A',
                     ],
                     'score' => 100, // Atau logika penilaian lain jika ingin
@@ -211,7 +212,7 @@ class VacanciesController extends Controller
                     'description' => $vacancy->job_description ?? $vacancy->description,
                     'location' => $vacancy->location,
                     'type' => $vacancy->jobType ? $vacancy->jobType->name : 'N/A',
-                    'deadline' => $vacancy->deadline ? $vacancy->deadline->format('d F Y') : 'Open',
+                    'deadline' => $vacancy->deadline ? (is_object($vacancy->deadline) ? $vacancy->deadline->format('d F Y') : Carbon::parse($vacancy->deadline)->format('d F Y')) : 'Open',
                     'department' => $vacancy->department ? $vacancy->department->name : 'N/A',
                 ];
             });

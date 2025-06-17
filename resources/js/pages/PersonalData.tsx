@@ -88,7 +88,7 @@ const CustomProfileHeader = ({ name, email }: { name: string; email: string }) =
                     {open && (
                         <div className="absolute right-0 mt-2 w-48 bg-white border-2 border-dashed border-gray-400 rounded shadow-lg z-50">
                             <button
-                                onClick={() => router.visit('/dashboard')}
+                                onClick={() => router.visit('/candidate/dashboard')}
                                 className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
                             >
                                 Dasbor
@@ -145,12 +145,6 @@ interface PrestasiData {
 interface TambahPrestasiFormProps {
     achievementData?: PrestasiData;
     onSuccess: () => void;
-    onBack: () => void;
-}
-
-interface TambahOrganisasiFormProps {
-    onSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
-    onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     onBack: () => void;
 }
 
@@ -641,16 +635,13 @@ const PersonalData: React.FC<Props> = ({ profile, user }) => {
             if (showOrganisasiForm) {
                 return (
                     <TambahOrganisasiForm
-                        onSubmit={handleSubmit}
-                        onChange={handleChange}
                         onBack={() => setShowOrganisasiForm(false)}
+                        onSuccess={() => setShowOrganisasiForm(false)}
                     />
                 );
             }
             return (
-                <OrganisasiForm
-                    onTambahOrganisasi={() => setShowOrganisasiForm(true)}
-                />
+                <OrganisasiForm />
             );
         }
         if (activeForm === FormType.PENGALAMAN) {
@@ -664,10 +655,7 @@ const PersonalData: React.FC<Props> = ({ profile, user }) => {
                 );
             }
             return (
-                <PengalamanKerjaForm
-                    onTambahPengalaman={handleTambahPengalaman}
-                    onEditPengalaman={handleEditPengalaman}
-                />
+                <PengalamanKerjaForm />
             );
         }
         if (activeForm === FormType.PENDIDIKAN) {
@@ -690,8 +678,8 @@ const PersonalData: React.FC<Props> = ({ profile, user }) => {
                     <form onSubmit={handleSubmit} className="p-6 space-y-6">
                         <div className="grid grid-cols-2 gap-6 text-black">
                             <div>
-                                <InputField label="No. E-KTP" name="no_ektp" value={data.no_ektp} onChange={handleChange} />
-                                <InputField label="Nama Lengkap" name="name" value={data.name} onChange={handleChange} />
+                                <InputField label="No. E-KTP" name="no_ektp" type="text" value={data.no_ektp} onChange={handleChange} />
+                                <InputField label="Nama Lengkap" name="name" type="text" value={data.name} onChange={handleChange} />
                                 <InputField label="Email" name="email" type="email" value={data.email} onChange={handleChange} />
 
                                 <SelectField
@@ -709,6 +697,7 @@ const PersonalData: React.FC<Props> = ({ profile, user }) => {
                                 <InputField
                                     label="No. Telepon"
                                     name="phone_number"
+                                    type="text"
                                     value={data.phone_number}
                                     onChange={handleChange}
                                 />
@@ -716,6 +705,7 @@ const PersonalData: React.FC<Props> = ({ profile, user }) => {
                                     <InputField
                                         label="NPWP"
                                         name="npwp"
+                                        type="text"
                                         value={data.npwp}
                                         onChange={handleChange}
                                         disabled={data.punyaNpwp}
@@ -756,23 +746,23 @@ const PersonalData: React.FC<Props> = ({ profile, user }) => {
 
                         <h3 className="font-semibold border-b pb-2">Kelahiran</h3>
                         <div className="grid grid-cols-2 gap-6">
-                            <InputField label="Tempat Lahir" name="place_of_birth" value={data.place_of_birth} onChange={handleChange} />
+                            <InputField label="Tempat Lahir" name="place_of_birth" type="text" value={data.place_of_birth} onChange={handleChange} />
                             <InputField label="Tanggal Lahir" name="date_of_birth" type="date" value={data.date_of_birth} onChange={handleChange} />
                         </div>
 
                         <h3 className="font-semibold border-b pb-2">Alamat</h3>
                         <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <InputField label="Alamat" name="address" value={data.address} onChange={handleChange} />
-                                <InputField label="Provinsi" name="province" value={data.province} onChange={handleChange} />
-                                <InputField label="Kecamatan" name="district" value={data.district} onChange={handleChange} />
-                                <InputField label="Kelurahan/Desa" name="village" value={data.village} onChange={handleChange} />
+                                <InputField label="Alamat" name="address" type="text" value={data.address} onChange={handleChange} />
+                                <InputField label="Provinsi" name="province" type="text" value={data.province} onChange={handleChange} />
+                                <InputField label="Kecamatan" name="district" type="text" value={data.district} onChange={handleChange} />
+                                <InputField label="Kelurahan/Desa" name="village" type="text" value={data.village} onChange={handleChange} />
                             </div>
                             <div>
-                                <InputField label="Kota/Kabupaten" name="city" value={data.city} onChange={handleChange} />
+                                <InputField label="Kota/Kabupaten" name="city" type="text" value={data.city} onChange={handleChange} />
                                 <div className="grid grid-cols-2 gap-4">
-                                    <InputField label="RT" name="rt" value={data.rt} onChange={handleChange} />
-                                    <InputField label="RW" name="rw" value={data.rw} onChange={handleChange} />
+                                    <InputField label="RT" name="rt" type="text" value={data.rt} onChange={handleChange} />
+                                    <InputField label="RW" name="rw" type="text" value={data.rw} onChange={handleChange} />
                                 </div>
                             </div>
                         </div>
