@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Vacancies;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,17 +14,28 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            MasterMajorSeeder::class,
+            CandidatesProfilesSeeder::class,
+            CandidatesWorkExperiencesSeeder::class,
+            CandidatesOrganizationsSeeder::class,
+            CandidatesAchievementsSeeder::class,
+            CandidatesSocialMediaSeeder::class,
             SuperAdminSeeder::class,
             DepartmentsTableSeeder::class,
-            CandidateSeeder::class,
-            CandidateProfileSeeder::class,
+            SelectionSeeder::class,
             CompaniesTableSeeder::class,
-            JobTypesTableSeeder::class,
+            VacanciesTypesTableSeeder::class,
+            CandidatesEducationSeeder::class,
+            SelectionSeeder::class,
+            PeriodsSeeder::class,
             VacanciesSeeder::class,
-            // VacanciesTableSeeder::class,
-
-
-
+            VacanciesPeriodsSeeder::class,
+            ApplicationsSeeder::class,
+            InterviewsSeeder::class,
+            ApplicationHistorySeeder::class,
+            JobSeeder::class,
+            QuestionSeeder::class,
+            ChoiceSeeder::class,
         ]);
     }
 }
