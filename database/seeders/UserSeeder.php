@@ -32,7 +32,6 @@ class UserSeeder extends Seeder
             'email' => 'hr@gmail.com',
             'password' => Hash::make('password'),
             'role' => UserRole::HR,
-            'no_ektp' => $this->faker->unique()->numerify('################'),
         ]);
 
         // Hapus relasi candidate profile user id 1 jika ada
@@ -48,7 +47,6 @@ class UserSeeder extends Seeder
             'email' => 'candidate@gmail.com',
             'password' => Hash::make('password'),
             'role' => UserRole::CANDIDATE,
-            'no_ektp' => $this->faker->unique()->numerify('################'),
         ]);
 
         // Hapus user id 2 jika ada
@@ -61,15 +59,14 @@ class UserSeeder extends Seeder
             'email' => 'candidate2@gmail.com',
             'password' => Hash::make('password'),
             'role' => UserRole::CANDIDATE,
-            'no_ektp' => $this->faker->unique()->numerify('################'),
         ]);
 
-        // Batch factory, JANGAN isi no_ektp manual!
+        // Batch factory, tanpa no_ektp
         User::factory(3)->create([
             'role' => UserRole::CANDIDATE,
         ]);
 
-        // Batch harian, JANGAN isi no_ektp manual!
+        // Batch harian
         $dayDistribution = [
             1 => 8,
             2 => 5,

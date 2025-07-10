@@ -7,31 +7,33 @@ use App\Models\User;
 use App\Models\CandidatesProfiles;
 use Carbon\Carbon;
 use App\Enums\UserRole;
+use Faker\Factory as Faker;
 
 class CandidatesProfilesSeeder extends Seeder
 {
     public function run(): void
     {
+        $faker = Faker::create('id_ID');
         $candidates = User::where('role', UserRole::CANDIDATE)->get();
 
         foreach ($candidates as $user) {
             CandidatesProfiles::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'no_ektp' => $user->no_ektp,
-                    'gender' => rand(0, 1) ? 'male' : 'female', // Langsung gunakan string
-                    'phone_number' => '08' . rand(1000000000, 9999999999),
-                    'npwp' => rand(0, 1) ? '1234567890' . rand(100, 999) : null,
+                    'no_ektp' => $faker->numerify('################'), // Generate 16 digit number
+                    'gender' => $faker->randomElement(['male', 'female']),
+                    'phone_number' => '08' . $faker->numerify('#########'),
+                    'npwp' => $faker->boolean(70) ? $faker->numerify('##############') : null,
                     'about_me' => 'Saya seorang kandidat yang berdedikasi.',
-                    'place_of_birth' => 'Jakarta',
-                    'date_of_birth' => Carbon::now()->subYears(rand(20, 30))->format('Y-m-d'),
-                    'address' => 'Jl. Contoh No. ' . rand(1, 100),
+                    'place_of_birth' => $faker->city,
+                    'date_of_birth' => $faker->dateTimeBetween('-30 years', '-20 years')->format('Y-m-d'),
+                    'address' => $faker->streetAddress,
                     'province' => 'DKI Jakarta',
                     'city' => 'Jakarta Selatan',
                     'district' => 'Kebayoran Baru',
                     'village' => 'Gandaria Utara',
-                    'rt' => str_pad(rand(1, 10), 2, '0', STR_PAD_LEFT),
-                    'rw' => str_pad(rand(1, 10), 2, '0', STR_PAD_LEFT),
+                    'rt' => str_pad($faker->numberBetween(1, 20), 3, '0', STR_PAD_LEFT),
+                    'rw' => str_pad($faker->numberBetween(1, 10), 3, '0', STR_PAD_LEFT),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]
